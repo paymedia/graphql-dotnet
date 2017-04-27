@@ -24,15 +24,15 @@ namespace GraphQL
         {
             var data = result.Data;
 
-            if (result.Errors?.Count > 0 && data == null)
-            {
-                return;
-            }
+            //if (result.Errors?.Count > 0 && data == null)
+            //{
+            //    return;
+            //}
 
-            if (result.Errors?.Count > 0)
-            {
-                data = null;
-            }
+            //if (result.Errors?.Count > 0)
+            //{
+            //    data = null;
+            //}
 
             writer.WritePropertyName("data");
             serializer.Serialize(writer, data);
