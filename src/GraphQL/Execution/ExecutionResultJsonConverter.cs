@@ -14,7 +14,11 @@ namespace GraphQL
                 writer.WriteStartObject();
 
                 writeData(result, writer, serializer);
-                writeCrc(result, writer, serializer);
+                if (!string.IsNullOrEmpty(result.Crc))
+                {
+
+                    writeCrc(result, writer, serializer);
+                }
                 writeErrors(result.Errors, writer, serializer);
 
                 writer.WriteEndObject();
