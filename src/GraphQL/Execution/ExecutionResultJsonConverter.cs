@@ -72,7 +72,7 @@ namespace GraphQL
                 }
                 else
                 {
-                    serializer.Serialize(writer, $"{error.Message}{exceptionMsg}");
+                    serializer.Serialize(writer, $"{error.Message} {exceptionMsg}");
                 }
 
                 if (error.Locations != null)
