@@ -14,6 +14,7 @@ namespace GraphQL
                 writer.WriteStartObject();
 
                 writeData(result, writer, serializer);
+                writeCrc(result, writer, serializer);
                 writeErrors(result.Errors, writer, serializer);
 
                 writer.WriteEndObject();
@@ -37,6 +38,15 @@ namespace GraphQL
             writer.WritePropertyName("data");
             serializer.Serialize(writer, data);
         }
+
+        private void writeCrc(ExecutionResult result, JsonWriter writer, JsonSerializer serializer)
+        {
+            var data = result.Data;
+
+            writer.WritePropertyName("crc");
+            serializer.Serialize(writer, result.Crc);
+        }
+
 
         private void writeErrors(ExecutionErrors errors, JsonWriter writer, JsonSerializer serializer)
         {

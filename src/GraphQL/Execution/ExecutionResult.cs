@@ -13,6 +13,8 @@ namespace GraphQL
 
         public string Query { get; set; }
 
+        public string Crc { get; set; }
+
         public Document Document { get; set; }
 
         public Operation Operation { get; set; }
