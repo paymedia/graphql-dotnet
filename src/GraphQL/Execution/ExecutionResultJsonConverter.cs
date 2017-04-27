@@ -79,11 +79,13 @@ namespace GraphQL
                     serializer.Serialize(writer, $"{error.Message} {exceptionMsg}");
                 }
 
+                /* Do not need this
                 if (error.Locations != null)
                 {
                     writer.WritePropertyName("locations");
                     serializer.Serialize(writer, error.Locations);
                 }
+                */
 
                 writer.WriteEndObject();
             });
