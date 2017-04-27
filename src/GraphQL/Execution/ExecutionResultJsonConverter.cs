@@ -64,7 +64,16 @@ namespace GraphQL
                 writer.WriteStartObject();
 
                 writer.WritePropertyName("message");
-                serializer.Serialize(writer, error.Message);
+
+                var exceptionMsg = error.InnerException?.Message;
+                if (string.IsNullOrEmpty(exceptionMsg) || error.Message.Contains(exceptionMsg))
+                {
+                    serializer.Serialize(writer, $"{error.Message}");
+                }
+                else
+                {
+                    serializer.Serialize(writer, $"{error.Message}{exceptionMsg}");
+                }
 
                 if (error.Locations != null)
                 {
