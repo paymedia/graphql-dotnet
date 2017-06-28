@@ -1,4 +1,5 @@
-﻿using GraphQL.Http;
+﻿using System;
+using GraphQL.Http;
 using GraphQL.Introspection;
 using GraphQL.Types;
 using Shouldly;
@@ -16,6 +17,16 @@ namespace GraphQL.Tests.Introspection
             var json = new DocumentWriter(true).Write(executionResult.Data);
 
             ShouldBe(json, IntrospectionResult.Data);
+        }
+
+        [Fact]
+        public void validate_no_introspection()
+        {
+            var documentExecuter = new DocumentExecuter(true);
+            var executionResult = documentExecuter.ExecuteAsync(new Schema(), null, SchemaIntrospection.IntrospectionQuery, null).Result;
+            var json = new DocumentWriter(true).Write(executionResult.Data);
+
+            ShouldBe(json, "{}");
         }
 
         [Fact]

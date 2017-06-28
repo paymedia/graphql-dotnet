@@ -35,6 +35,8 @@ namespace GraphQL
 
     public class DocumentExecuter : IDocumentExecuter
     {
+        [ThreadStatic]
+        private static bool _disableIntrospection;
         private readonly IDocumentBuilder _documentBuilder;
         private readonly IDocumentValidator _documentValidator;
         private readonly IComplexityAnalyzer _complexityAnalyzer;
@@ -44,11 +46,24 @@ namespace GraphQL
         {
         }
 
+        public DocumentExecuter(bool disableIntrospection)
+            : this(new GraphQLDocumentBuilder(), new DocumentValidator(), new ComplexityAnalyzer(), disableIntrospection)
+        {
+
+        }
+
         public DocumentExecuter(IDocumentBuilder documentBuilder, IDocumentValidator documentValidator, IComplexityAnalyzer complexityAnalyzer)
+             : this(new GraphQLDocumentBuilder(), new DocumentValidator(), new ComplexityAnalyzer(), false)
+        {
+
+        }
+
+        public DocumentExecuter(IDocumentBuilder documentBuilder, IDocumentValidator documentValidator, IComplexityAnalyzer complexityAnalyzer, bool disableIntrospection)
         {
             _documentBuilder = documentBuilder;
             _documentValidator = documentValidator;
             _complexityAnalyzer = complexityAnalyzer;
+            _disableIntrospection = disableIntrospection;
         }
 
         public Task<ExecutionResult> ExecuteAsync(
@@ -462,15 +477,15 @@ namespace GraphQL
         {
             if (field.Name == SchemaIntrospection.SchemaMeta.Name && schema.Query == parentType)
             {
-                return SchemaIntrospection.SchemaMeta;
+                return _disableIntrospection ? null : SchemaIntrospection.SchemaMeta;
             }
             if (field.Name == SchemaIntrospection.TypeMeta.Name && schema.Query == parentType)
             {
-                return SchemaIntrospection.TypeMeta;
+                return _disableIntrospection ? null : SchemaIntrospection.TypeMeta;
             }
             if (field.Name == SchemaIntrospection.TypeNameMeta.Name)
             {
-                return SchemaIntrospection.TypeNameMeta;
+                return _disableIntrospection ? null : SchemaIntrospection.TypeNameMeta;
             }
 
             return parentType.Fields.FirstOrDefault(f => f.Name == field.Name);
