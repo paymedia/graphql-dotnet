@@ -18,3 +18,4 @@ TestResults/
 packages/
 node_modules/
 nuget/lib
+/src/Paymedia.snk

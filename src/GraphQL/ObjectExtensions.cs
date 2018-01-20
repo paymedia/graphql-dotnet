@@ -51,8 +51,7 @@ namespace GraphQL
             {
                 var elementType = enumerableInterface.GetGenericArguments()[0];
                 var underlyingType = Nullable.GetUnderlyingType(elementType) ?? elementType;
-                var genericListType = typeof(List<>).MakeGenericType(elementType);
-                var newArray = (IList) Activator.CreateInstance(genericListType);
+                var newArray = (IList) Activator.CreateInstance(fieldType);
 
                 var valueList = propertyValue as IEnumerable;
                 if (valueList == null) return newArray;
