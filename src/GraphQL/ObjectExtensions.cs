@@ -49,10 +49,21 @@ namespace GraphQL
             if (fieldType.Name != "String"
                 && enumerableInterface != null)
             {
+                IList newArray;
                 var elementType = enumerableInterface.GetGenericArguments()[0];
                 var underlyingType = Nullable.GetUnderlyingType(elementType) ?? elementType;
-                var newArray = (IList) Activator.CreateInstance(fieldType);
-
+                var implementsIList = fieldType.GetInterface("IList")!=null;
+                
+                if (implementsIList)
+                {
+                    newArray = (IList)Activator.CreateInstance(fieldType);            
+                }
+                else
+                {
+                    var genericListType = typeof(List<>).MakeGenericType(elementType);
+                    newArray = (IList)Activator.CreateInstance(genericListType);
+                }
+               
                 var valueList = propertyValue as IEnumerable;
                 if (valueList == null) return newArray;
 
