@@ -1,10 +1,14 @@
 using System;
+using System.Reflection;
 using Newtonsoft.Json;
 
 namespace GraphQL
 {
     public class ExecutionResultJsonConverter : JsonConverter
     {
+        public const string ERROR_TYPE_SYSTEM = "System";
+        public const string ERROR_TYPE_APPLICATION = "Application";
+
         public override void WriteJson(JsonWriter writer, object value, JsonSerializer serializer)
         {
             if (value is ExecutionResult)
@@ -54,6 +58,8 @@ namespace GraphQL
 
         private void writeErrors(ExecutionErrors errors, JsonWriter writer, JsonSerializer serializer)
         {
+            var errorType = ERROR_TYPE_SYSTEM;
+
             if (errors == null || errors.Count == 0)
             {
                 return;
@@ -68,7 +74,6 @@ namespace GraphQL
                 writer.WriteStartObject();
 
                 writer.WritePropertyName("message");
-
                 var exceptionMsg = error.InnerException?.Message;
                 if (string.IsNullOrEmpty(exceptionMsg) || error.Message.Contains(exceptionMsg))
                 {
@@ -79,13 +84,19 @@ namespace GraphQL
                     serializer.Serialize(writer, $"{error.Message} {exceptionMsg}");
                 }
 
-                /* Do not need this
-                if (error.Locations != null)
-                {
-                    writer.WritePropertyName("locations");
-                    serializer.Serialize(writer, error.Locations);
-                }
-                */
+                var exceptionType = error.InnerException?.GetType();
+                var applicationExceptionType = Type.GetType("System.ApplicationException");
+
+                if (exceptionType != null && applicationExceptionType.IsAssignableFrom(exceptionType))
+                    errorType = ERROR_TYPE_APPLICATION;
+
+                writer.WritePropertyName("extensions");
+                writer.WriteStartObject();
+                writer.WritePropertyName("type");
+                writer.WriteValue(errorType);
+                writer.WritePropertyName("userMessage");
+                writer.WriteValue(error.InnerException?.Message);
+                writer.WriteEnd();
 
                 writer.WriteEndObject();
             });
