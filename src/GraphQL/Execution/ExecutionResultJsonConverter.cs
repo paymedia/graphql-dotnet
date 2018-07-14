@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.Reflection;
 using Newtonsoft.Json;
 
@@ -6,8 +7,13 @@ namespace GraphQL
 {
     public class ExecutionResultJsonConverter : JsonConverter
     {
-        public const string ERROR_TYPE_SYSTEM = "System";
-        public const string ERROR_TYPE_APPLICATION = "Application";
+        public const string ErrorTypeSystem = "System";
+        public const string ErrorTypeApplication = "Application";
+
+        public List<string> ApplicationExceptionExclusions = new List<string>
+        {
+            "DataAccessException"
+        };
 
         public override void WriteJson(JsonWriter writer, object value, JsonSerializer serializer)
         {
@@ -58,7 +64,7 @@ namespace GraphQL
 
         private void writeErrors(ExecutionErrors errors, JsonWriter writer, JsonSerializer serializer)
         {
-            var errorType = ERROR_TYPE_SYSTEM;
+            var errorType = ErrorTypeSystem;
 
             if (errors == null || errors.Count == 0)
             {
@@ -87,8 +93,8 @@ namespace GraphQL
                 var exceptionType = error.InnerException?.GetType();
                 var applicationExceptionType = Type.GetType("System.ApplicationException");
 
-                if (exceptionType != null && applicationExceptionType.IsAssignableFrom(exceptionType))
-                    errorType = ERROR_TYPE_APPLICATION;
+                if (exceptionType != null && !ApplicationExceptionExclusions.Contains(exceptionType.Name) && applicationExceptionType.IsAssignableFrom(exceptionType) )
+                    errorType = ErrorTypeApplication;
 
                 writer.WritePropertyName("extensions");
                 writer.WriteStartObject();
