@@ -25,16 +25,21 @@ namespace GraphQL.Validation
 
         void INodeVisitor.Enter(INode node)
         {
-            _listeners
-                .Where(l => l.Enter != null && l.Matches(node))
-                .Apply(l => l.Enter(node));
+            foreach (var listener in _listeners)
+            {
+                if (listener.Enter != null && listener.Matches(node))
+                    listener.Enter(node);
+            }
         }
 
         void INodeVisitor.Leave(INode node)
         {
-            _listeners
-                .Where(l => l.Leave != null && l.Matches(node))
-                .Apply(l => l.Leave(node));
+
+            foreach (var listener in _listeners)
+            {
+                if (listener.Leave != null && listener.Matches(node))
+                    listener.Leave(node);
+            }
         }
 
         public void Match<T>(

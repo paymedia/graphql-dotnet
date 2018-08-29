@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Linq;
 using GraphQL.Language.AST;
 
 namespace GraphQL.Validation
@@ -19,11 +20,21 @@ namespace GraphQL.Validation
                 return;
             }
 
-            _visitors.Apply(l => l.Enter(node));
+            var visitorsList = _visitors.ToList();
 
-            node.Children?.Apply(Visit);
+            foreach(var visitor in visitorsList)
+                visitor.Enter(node);
 
-            _visitors.ApplyReverse(l => l.Leave(node));
+            if (node.Children != null)
+            {
+                foreach (var child in node.Children)
+                    Visit(child);
+            }
+
+            for (var i = visitorsList.Count - 1; i >= 0; i--)
+            {
+                visitorsList[i].Leave(node);
+            }
         }
     }
 }
