@@ -356,7 +356,7 @@ namespace GraphQL
             var executionError = exc as ExecutionError;
             if (executionError != null)
             {
-                error = executionError;
+                error = new ExecutionError("Error trying to resolve {0}.".ToFormat(field.Name), exc, executionError.AdditionalErrorProperties);
             }
             else
             {
