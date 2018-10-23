@@ -100,6 +100,16 @@ namespace GraphQL
                 writer.WriteStartObject();
                 writer.WritePropertyName("type");
                 writer.WriteValue(errorType);
+
+                if (error.AdditionalErrorProperties != null)
+                {
+                    foreach (var additionalErrorProperty in error.AdditionalErrorProperties)
+                    {
+                        writer.WritePropertyName(additionalErrorProperty.Key);
+                        writer.WriteValue(additionalErrorProperty.Value);
+                    }
+                }
+
                 writer.WritePropertyName("userMessage");
                 writer.WriteValue(error.InnerException?.Message);
                 writer.WriteEnd();

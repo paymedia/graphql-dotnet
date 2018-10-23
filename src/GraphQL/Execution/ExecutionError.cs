@@ -8,6 +8,7 @@ namespace GraphQL
     public class ExecutionError : Exception
     {
         private List<ErrorLocation> _errorLocations;
+        private Dictionary<string, string> _additionalErrorProperties;
 
         public ExecutionError(string message)
             : base(message)
@@ -19,7 +20,14 @@ namespace GraphQL
         {
         }
 
+        public ExecutionError(string message, Exception innerException, Dictionary<string, string> additionalErrorProperties)
+            : base(message, innerException)
+        {
+            _additionalErrorProperties = additionalErrorProperties ?? new Dictionary<string, string>();
+        }
+
         public IEnumerable<ErrorLocation> Locations => _errorLocations;
+        public Dictionary<string, string> AdditionalErrorProperties => _additionalErrorProperties;
 
         public void AddLocation(int line, int column)
         {
