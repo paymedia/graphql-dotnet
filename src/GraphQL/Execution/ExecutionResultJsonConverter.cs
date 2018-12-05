@@ -19,6 +19,8 @@ namespace GraphQL
         {
             if (value is ExecutionResult)
             {
+                writer.DateTimeZoneHandling = DateTimeZoneHandling.Unspecified;
+             
                 var result = (ExecutionResult) value;
 
                 writer.WriteStartObject();
