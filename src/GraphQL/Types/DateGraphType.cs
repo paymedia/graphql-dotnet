@@ -23,8 +23,7 @@ namespace GraphQL.Types
         {
             if (value is DateTime)
             {
-                DateTime dateTime = (DateTime)value;
-                return dateTime.Kind == DateTimeKind.Utc ? dateTime : dateTime.ToUniversalTime();
+                return (DateTime)value;
             }
 
             string inputValue = value?.ToString().Trim('"');
