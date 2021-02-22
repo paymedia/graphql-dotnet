@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using GraphQL.Resolvers;
 
 namespace GraphQL.Types
 {
@@ -23,5 +24,25 @@ namespace GraphQL.Types
 
     public class InterfaceGraphType : InterfaceGraphType<object>
     {
+        public new FieldType Field<TGraphType>(
+            string name,
+            string description = null,
+            QueryArguments arguments = null,
+            Func<ResolveFieldContext<object>, object> resolve = null,
+            string deprecationReason = null)
+            where TGraphType : IGraphType
+        {
+            return AddField(new FieldType
+            {
+                Name = name,
+                Description = description,
+                DeprecationReason = deprecationReason,
+                Type = typeof(TGraphType),
+                Arguments = arguments,
+                Resolver = resolve != null
+                    ? new FuncFieldResolver<object, object>(resolve)
+                    : null,
+            });
+        }
     }
 }

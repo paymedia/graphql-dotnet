@@ -55,6 +55,7 @@ namespace GraphQL.Types
             return fieldType;
         }
 
+        [Obsolete("Only fields with a specified useCase can be added.")]
         public FieldType Field(
             Type type,
             string name,
@@ -76,6 +77,7 @@ namespace GraphQL.Types
             });
         }
 
+        [Obsolete("Only fields with a specified useCase can be added.")]
         public FieldType Field<TGraphType>(
             string name,
             string description = null,
@@ -97,6 +99,7 @@ namespace GraphQL.Types
             });
         }
 
+        [Obsolete("Only fields with a specified useCase can be added.")]
         public FieldType FieldAsync<TGraphType>(
             string name,
             string description = null,
